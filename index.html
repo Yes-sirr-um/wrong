@@ -1,577 +1,426 @@
 <!DOCTYPE html>
-<html lang="en" style="background-color: #060305;">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#060305">
-    <title>After Midnight — Prathyusha</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Way We Rise and Fall</title>
+  <style>
+    :root {
+      --ink: #fdf6f6;
+      --plum: #f8e9ea;
+      --ember: #b5121b;
+      --rose: #d2434d;
+      --cream: #3d1418;
+      --muted: #8a5a5f;
+      --line: rgba(61, 20, 24, 0.12);
+    }
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        serif: ['Playfair Display', 'serif'],
-                        editorial: ['Cormorant Garamond', 'serif'],
-                        sans: ['Montserrat', 'sans-serif'],
-                        script: ['Great Vibes', 'cursive'],
-                    },
-                    colors: {
-                        noir: {
-                            bg: '#060305',
-                            panel: '#10070a',
-                            crimson: '#9e0b22',
-                            ember: '#e0243b',
-                            amber: '#d99b52',
-                            blush: '#f3dce0',
-                            muted: '#9b8287'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    html { scroll-behavior: smooth; }
 
-    <style>
-        html, body {
-            background-color: #060305 !important;
-            color: #f3dce0 !important;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            font-family: 'Montserrat', sans-serif;
-        }
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-weight: 300;
+      background: var(--ink);
+      color: var(--cream);
+      line-height: 1.9;
+      overflow-x: hidden;
+    }
 
-        /* Ambient Glow */
-        .ambient-backdrop {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            background:
-                radial-gradient(circle at 20% 25%, rgba(158, 11, 34, 0.18) 0%, transparent 48%),
-                radial-gradient(circle at 80% 75%, rgba(217, 155, 82, 0.1) 0%, transparent 46%),
-                #060305;
-        }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(120,20,30,0.05) 1px, transparent 1px);
+      background-size: 3px 3px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        /* Entry Curtain */
-        #entryCurtain {
-            transition: opacity 0.8s ease, visibility 0.8s ease;
-        }
-        #entryCurtain.curtain-hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+    .glow {
+      position: fixed;
+      width: 520px;
+      height: 520px;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+    .glow.a { top: -200px; right: -160px; background: rgba(181, 18, 27, 0.22); }
+    .glow.b { bottom: -220px; left: -180px; background: rgba(210, 67, 77, 0.16); }
 
-        /* Chapter Slide Transitions */
-        .chapter-slide {
-            display: none;
-            animation: slideFadeIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        .chapter-slide.active {
-            display: grid;
-        }
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 48px;
+      background: linear-gradient(to bottom, rgba(253,246,246,0.95), rgba(253,246,246,0));
+    }
 
-        @keyframes slideFadeIn {
-            from { opacity: 0; transform: translateY(14px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    nav .brand {
+      font-family: Georgia, serif;
+      font-style: italic;
+      color: var(--ember);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+    }
 
-        /* Filmstrip Thumbnails */
-        .thumb-btn {
-            transition: all 0.3s ease;
-            opacity: 0.45;
-            border: 1px solid rgba(217, 155, 82, 0.2);
-        }
-        .thumb-btn:hover {
-            opacity: 0.8;
-        }
-        .thumb-btn.active {
-            opacity: 1;
-            border-color: #d99b52;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px -6px rgba(224, 36, 59, 0.55);
-        }
+    nav ul {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
 
-        /* Intense Line Glow */
-        .intense-glow {
-            text-shadow: 0 0 26px rgba(224, 36, 59, 0.65);
-        }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
 
-        /* Floating Embers */
-        @keyframes riseEmber {
-            0% { transform: translateY(105vh) translateX(0) scale(0.7); opacity: 0; }
-            20% { opacity: 0.55; }
-            85% { opacity: 0.35; }
-            100% { transform: translateY(-10vh) translateX(var(--drift, 25px)) scale(0.2); opacity: 0; }
-        }
-        .ember {
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 2;
-            animation: riseEmber linear infinite;
-        }
+    nav a:hover { color: var(--cream); }
 
-        /* Spark Burst */
-        @keyframes burstFly {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-        }
-        .burst-dot {
-            position: fixed;
-            pointer-events: none;
-            z-index: 1000;
-            border-radius: 50%;
-            animation: burstFly 1.3s cubic-bezier(0, .85, .45, 1) forwards;
-        }
+    .wrap {
+      position: relative;
+      z-index: 1;
+    }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 64px;
+      padding: 120px 8vw 80px;
+    }
+
+    .eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 26px;
+    }
+
+    .hero h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: normal;
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 em { color: var(--ember); }
+
+    .hero p.lede {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 420px;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 32px;
+      border: 1px solid var(--ember);
+      color: var(--ember);
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .btn:hover {
+      background: var(--ember);
+      color: var(--ink);
+    }
+
+    .hero-art {
+      position: relative;
+    }
+
+    .hero-art img {
+      width: 100%;
+      display: block;
+      border-radius: 2px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    }
+
+    .hero-art::after {
+      content: "";
+      position: absolute;
+      inset: -14px -14px 14px 14px;
+      border: 1px solid var(--line);
+      z-index: -1;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      color: var(--muted);
+      font-family: Georgia, serif;
+      font-style: italic;
+      padding: 40px 0;
+    }
+
+    .divider::before, .divider::after {
+      content: "";
+      width: 90px;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .chapter {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 72px;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 110px 8vw;
+      border-top: 1px solid var(--line);
+    }
+
+    .chapter.reverse { grid-template-columns: 1.2fr 1fr; }
+    .chapter.reverse .chapter-art { order: 2; }
+
+    .chapter-num {
+      font-family: Georgia, serif;
+      font-style: italic;
+      color: var(--rose);
+      font-size: 1.1rem;
+      margin-bottom: 14px;
+    }
+
+    .chapter h2 {
+      font-family: Georgia, serif;
+      font-weight: normal;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      margin-bottom: 22px;
+    }
+
+    .chapter p {
+      color: var(--muted);
+      margin-bottom: 16px;
+      font-size: 1rem;
+    }
+
+    .chapter-art img {
+      width: 100%;
+      display: block;
+      border-radius: 2px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+    }
+
+    .closing {
+      text-align: center;
+      padding: 140px 8vw 120px;
+      border-top: 1px solid var(--line);
+    }
+
+    .closing .words {
+      font-family: Georgia, serif;
+      font-style: italic;
+      font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+      color: var(--ember);
+      letter-spacing: 0.04em;
+      margin-bottom: 36px;
+    }
+
+    .closing p {
+      max-width: 560px;
+      margin: 0 auto;
+      color: var(--muted);
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+
+    .prologue {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 120px 8vw 40px;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .prologue-art {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .prologue-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 2px;
+      box-shadow: 0 20px 50px rgba(60, 50, 90, 0.2);
+    }
+
+    .prologue-text p {
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .prologue-text h2 {
+      font-family: Georgia, serif;
+      font-weight: normal;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      margin-bottom: 22px;
+    }
+
+    @media (max-width: 860px) {
+      .prologue { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 1.2s ease, transform 1.2s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 860px) {
+      nav { padding: 18px 24px; }
+      nav ul { gap: 16px; }
+      nav a { font-size: 0.65rem; }
+      .hero, .chapter, .chapter.reverse {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+      .chapter.reverse .chapter-art { order: 0; }
+      .hero { padding-top: 130px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-noir-crimson selection:text-white">
+<body>
+  <div class="glow a"></div>
+  <div class="glow b"></div>
 
-    <div class="ambient-backdrop" aria-hidden="true"></div>
-    <div id="emberField" aria-hidden="true"></div>
+  <nav>
+    <a class="brand" href="#top">Rise &amp; Fall</a>
+    <ul>
+      <li><a href="#chapter-1">Chapter I</a></li>
+      <li><a href="#chapter-2">Chapter II</a></li>
+      <li><a href="#chapter-3">Chapter III</a></li>
+    </ul>
+  </nav>
 
-    <!-- Background Audio -->
-    <audio id="bgAudio" loop>
-        <source src="desire.mp3" type="audio/mpeg">
-    </audio>
+  <div class="wrap">
+    <section class="prologue reveal">
+      <div class="prologue-art">
+        <img src="images/prologue-1.png" alt="Blurred figures walking along a shoreline at sunset, lit by warm light">
+        <img src="images/prologue-2.png" alt="Stylized pair of eyes, one in pink and one in blue">
+      </div>
+      <div class="prologue-text">
+        <p class="chapter-num">Prologue</p>
+        <h2>Before the lights go down</h2>
+        <p>Every evening starts somewhere quieter than it ends. Maybe it's a walk along the water as the sun drops, the sky going from gold to plum, the air cooling just enough to make you want to stay close.</p>
+        <p>Maybe it's a look across the room that says more than either of you planned to. Nothing has to happen yet. The night is still ahead, and it is patient.</p>
+      </div>
+    </section>
 
-    <!-- ================= ENTRY CURTAIN ================= -->
-    <div id="entryCurtain" class="fixed inset-0 z-50 flex items-center justify-center bg-noir-bg px-6">
-        <div class="absolute inset-0 overflow-hidden">
-            <img src="image_6b18e0.jpg" alt="" class="w-full h-full object-cover opacity-35 scale-105" onerror="this.style.display='none'">
-            <div class="absolute inset-0 bg-gradient-to-b from-noir-bg/80 via-noir-bg/65 to-noir-bg"></div>
-        </div>
-
-        <div class="relative z-10 max-w-lg mx-auto text-center space-y-7">
-            <p class="font-sans text-[11px] uppercase tracking-[0.38em] text-noir-amber">
-                A Midnight Dossier ✦ Six Moments
-            </p>
-            <h1 class="font-serif text-5xl sm:text-6xl font-bold text-white leading-tight">
-                For Prathyusha
-            </h1>
-            <p class="font-editorial italic text-2xl sm:text-3xl text-noir-blush/90 leading-relaxed">
-                For the nights we have shared, and the pull I still cannot escape.
-            </p>
-            <div class="pt-3">
-                <button type="button" id="openDossierBtn" class="bg-noir-crimson hover:bg-noir-ember text-white border border-noir-amber/60 font-sans text-xs tracking-[0.26em] uppercase font-semibold py-4 px-10 rounded-full transition-all duration-300 transform hover:scale-105 shadow-[0_0_35px_rgba(158,11,34,0.55)]">
-                    Open the Night ✦
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= TOP EDITORIAL BAR ================= -->
-    <header class="relative z-20 border-b border-noir-amber/15 bg-noir-bg/75 backdrop-blur-md">
-        <div class="max-w-6xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <span class="w-2 h-2 rounded-full bg-noir-ember animate-pulse"></span>
-                <span class="font-sans text-[11px] uppercase tracking-[0.28em] text-noir-blush/90 font-medium">
-                    After Midnight
-                </span>
-            </div>
-
-            <div class="font-script text-2xl sm:text-3xl text-noir-amber">
-                Prathyusha
-            </div>
-
-            <div class="flex items-center gap-4">
-                <span id="chapterCounter" class="font-mono text-xs tracking-[0.2em] text-noir-muted">
-                    01 / 06
-                </span>
-                <button id="audioToggleBtn" class="p-2 rounded-full border border-noir-amber/35 text-noir-blush hover:border-noir-amber hover:text-white transition-colors" aria-label="Toggle Background Music">
-                    <svg id="audioIcon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <!-- Thin Crimson Progress Line -->
-        <div class="h-[2px] w-full bg-white/5">
-            <div id="progressBar" class="h-full bg-gradient-to-r from-noir-crimson via-noir-ember to-noir-amber transition-all duration-500" style="width: 16.66%;"></div>
-        </div>
+    <header class="hero" id="top">
+      <div class="reveal">
+        <p class="eyebrow">A night in, written for two</p>
+        <h1>The Way We <em>Rise</em> and Fall</h1>
+        <p class="lede">Some nights don't stay steady. They climb. They drop. They soak through everything.</p>
+        <a class="btn" href="#chapter-1">Begin</a>
+      </div>
+      <div class="hero-art reveal">
+        <img src="images/painting-1.png" alt="Warm-toned oil painting of two figures close together">
+      </div>
     </header>
 
-    <!-- ================= MAIN SPLIT-PANE STAGE ================= -->
-    <main id="stageSwipeArea" class="relative z-10 flex-1 flex items-center py-8 sm:py-10 px-4 sm:px-8">
-        <div class="max-w-6xl w-full mx-auto">
+    <div class="divider">slow, then closer</div>
 
-            <!-- SLIDE 01: TWILIGHT SILHOUETTES -->
-            <article class="chapter-slide active grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-index="0">
-                <div class="lg:col-span-6">
-                    <div class="relative rounded-2xl overflow-hidden border border-noir-amber/25 bg-noir-panel aspect-[4/5] max-h-[62vh] mx-auto shadow-[0_25px_70px_-20px_rgba(0,0,0,0.95)]">
-                        <img src="image_6b18e0.jpg" alt="Twilight silhouettes" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-noir-bg/70 via-transparent to-transparent"></div>
-                        <span class="absolute bottom-4 left-4 font-sans text-[10px] uppercase tracking-[0.26em] text-noir-amber/90 bg-noir-bg/70 backdrop-blur-sm px-3 py-1 rounded-full border border-noir-amber/25">
-                            Frame 01 • Dusk
-                        </span>
-                    </div>
-                </div>
-                <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
-                    <p class="font-sans text-[11px] uppercase tracking-[0.34em] text-noir-amber font-semibold">
-                        Moment 01 — The Nights
-                    </p>
-                    <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white leading-[1.12]">
-                        The nights we have shared, Prathyusha.
-                    </h2>
-                    <div class="space-y-4 font-editorial text-xl sm:text-2xl text-noir-blush/85 leading-[1.8]">
-                        <p>
-                            They remain some of my favorite memories—moments soaked in warmth, quiet tension, and a lingering desire that stays with me long after they end.
-                        </p>
-                        <p>
-                            Even when the night is over, the thought of you never really leaves.
-                        </p>
-                    </div>
-                </div>
-            </article>
+    <section class="chapter" id="chapter-1">
+      <div class="chapter-art reveal">
+        <img src="images/painting-2.png" alt="Dreamy painting of two figures in soft blue light, surrounded by flowers">
+      </div>
+      <div class="reveal">
+        <p class="chapter-num">I.</p>
+        <h2>The first slow touch</h2>
+        <p>Your skin is already warm when my hands find you. I trace a path slowly, from your shoulder down to the small of your back, until the air between us seems to change its shape.</p>
+        <p>You breathe in and hold it, and I feel your heartbeat quicken under my palm. Neither of us pretends this isn't what we wanted all evening.</p>
+      </div>
+    </section>
 
-            <!-- SLIDE 02: WARM LAMPLIGHT SHADOWS -->
-            <article class="chapter-slide grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-index="1">
-                <div class="lg:col-span-6">
-                    <div class="relative rounded-2xl overflow-hidden border border-noir-amber/25 bg-noir-panel aspect-[4/5] max-h-[62vh] mx-auto shadow-[0_25px_70px_-20px_rgba(0,0,0,0.95)]">
-                        <img src="image_6b2764.png" alt="Warm lamplight shadows" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-noir-bg/70 via-transparent to-transparent"></div>
-                        <span class="absolute bottom-4 left-4 font-sans text-[10px] uppercase tracking-[0.26em] text-noir-amber/90 bg-noir-bg/70 backdrop-blur-sm px-3 py-1 rounded-full border border-noir-amber/25">
-                            Frame 02 • Lamplight
-                        </span>
-                    </div>
-                </div>
-                <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
-                    <p class="font-sans text-[11px] uppercase tracking-[0.34em] text-noir-amber font-semibold">
-                        Moment 02 — Close in the Dark
-                    </p>
-                    <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white leading-[1.12]">
-                        Hours that refuse to fade.
-                    </h2>
-                    <div class="space-y-4 font-editorial text-xl sm:text-2xl text-noir-blush/85 leading-[1.8]">
-                        <p>
-                            Every late hour spent with you feels like the rest of the world goes silent, leaving just the warmth between us.
-                        </p>
-                        <p>
-                            There is a comfort and a spark in you, Prathyusha, that I have never found anywhere else.
-                        </p>
-                    </div>
-                </div>
-            </article>
+    <section class="chapter reverse" id="chapter-2">
+      <div class="reveal">
+        <p class="chapter-num">II.</p>
+        <h2>Playful, then closer</h2>
+        <p>I tease a little, light and unhurried. A laugh slips out of you, then a softer sound, and I love how easily you melt when I'm this close.</p>
+        <p>Your fingers tangle in my hair. I pull back just enough to make you reach for me, then draw you in again, slower this time, until the space between us disappears.</p>
+        <p>Outside, the city hums low and far away. Inside, there is only the soft light, the rustle of sheets, and the easy laughter that comes when two people stop pretending they're not already in the middle of something good.</p>
+      </div>
+      <div class="chapter-art reveal">
+        <img src="images/painting-3.png" alt="Abstract painting in blue, rust and pale tones with loose brushstrokes">
+      </div>
+    </section>
 
-            <!-- SLIDE 03: DUAL ART — THE GAZE & FALLING -->
-            <article class="chapter-slide grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-index="2">
-                <div class="lg:col-span-6">
-                    <div class="grid grid-cols-12 gap-3 max-w-lg mx-auto items-center">
-                        <div class="col-span-7 rounded-2xl overflow-hidden border border-noir-amber/25 bg-noir-panel aspect-[4/5] shadow-2xl">
-                            <img src="image_6b1f89.jpg" alt="Falling toward each other" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                        </div>
-                        <div class="col-span-5 space-y-3">
-                            <div class="rounded-2xl overflow-hidden border border-noir-amber/25 bg-noir-panel aspect-square shadow-2xl">
-                                <img src="image_6b1fc0.jpg" alt="Close-up gaze" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                            </div>
-                            <p class="font-sans text-[10px] uppercase tracking-[0.22em] text-noir-amber/80 text-center">
-                                Gravity • Chemistry
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
-                    <p class="font-sans text-[11px] uppercase tracking-[0.34em] text-noir-amber font-semibold">
-                        Moment 03 — Magnetic Pull
-                    </p>
-                    <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white leading-[1.12]">
-                        An undeniable pull.
-                    </h2>
-                    <div class="space-y-4 font-editorial text-xl sm:text-2xl text-noir-blush/85 leading-[1.8]">
-                        <p>
-                            The chemistry and the pull between us are simply too strong, Prathyusha.
-                        </p>
-                        <p>
-                            No matter the distance or the hour, everything in me keeps leaning straight back toward you.
-                        </p>
-                    </div>
-                </div>
-            </article>
+    <section class="chapter" id="chapter-3">
+      <div class="reveal" style="grid-column: 1 / -1; max-width: 680px; margin: 0 auto;">
+        <p class="chapter-num">III.</p>
+        <h2>Holding on through the high</h2>
+        <p>There's a moment when everything tightens, then loosens all at once, and we are both a little unsteady. I stay with you through all of it, your breath against my neck, the shaky laugh that follows.</p>
+        <p>Afterward the room is quiet again. I keep my arms around you and trace slow circles on your back, just to feel you settle.</p>
+        <p>We don't rush to get up. We talk about nothing in particular: the streetlight outside, the book on the nightstand, the way the sheets have twisted around our legs.</p>
+        <p>Eventually the window fades from black to blue, and we realize we've been awake all night. Neither of us minds. Some nights are measured in sleep, and some are measured in the things we said to each other before it came.</p>
+      </div>
+    </section>
 
-            <!-- SLIDE 04: EFFORTLESS ALLURE -->
-            <article class="chapter-slide grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-index="3">
-                <div class="lg:col-span-6">
-                    <div class="relative rounded-2xl overflow-hidden border border-noir-amber/25 bg-noir-panel aspect-[4/5] max-h-[62vh] mx-auto shadow-[0_25px_70px_-20px_rgba(0,0,0,0.95)]">
-                        <img src="image_6b1c62.jpg" alt="Woman in red painting" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-noir-bg/70 via-transparent to-transparent"></div>
-                        <span class="absolute bottom-4 left-4 font-sans text-[10px] uppercase tracking-[0.26em] text-noir-amber/90 bg-noir-bg/70 backdrop-blur-sm px-3 py-1 rounded-full border border-noir-amber/25">
-                            Frame 04 • Allure
-                        </span>
-                    </div>
-                </div>
-                <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
-                    <p class="font-sans text-[11px] uppercase tracking-[0.34em] text-noir-amber font-semibold">
-                        Moment 04 — The Muse
-                    </p>
-                    <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white leading-[1.12]">
-                        Effortlessly alluring.
-                    </h2>
-                    <div class="space-y-4 font-editorial text-xl sm:text-2xl text-noir-blush/85 leading-[1.8]">
-                        <p>
-                            You carry an attraction that is honestly insane—poised, deeply elegant, and captivating all at once.
-                        </p>
-                        <p>
-                            Prathyusha, you are the epitome of beauty in every sense.
-                        </p>
-                    </div>
-                </div>
-            </article>
+    <section class="closing reveal">
+      <p class="words">Up. Down. Warm. Playful. Completely gone for each other.</p>
+      <p>This is the kind of night I want with you, the ones that rise and fall until neither of us can tell where the closeness begins.</p>
+    </section>
+  </div>
 
-            <!-- SLIDE 05: CRIMSON EMBRACE — THE INTENSE LINE -->
-            <article class="chapter-slide grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-index="4">
-                <div class="lg:col-span-6">
-                    <div id="crimsonCanvas" class="relative rounded-2xl overflow-hidden border border-noir-crimson/70 bg-noir-panel aspect-square max-h-[60vh] mx-auto cursor-pointer group shadow-[0_25px_80px_-18px_rgba(158,11,34,0.55)]" title="Tap for sparks">
-                        <img src="image_6b1be3.jpg" alt="Crimson embrace" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.style.display='none'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-noir-bg/80 via-transparent to-transparent"></div>
-                        <span class="absolute bottom-4 left-4 font-sans text-[10px] uppercase tracking-[0.26em] text-noir-ember bg-noir-bg/75 backdrop-blur-sm px-3 py-1 rounded-full border border-noir-crimson/60">
-                            Tap for sparks ✦
-                        </span>
-                    </div>
-                </div>
-                <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
-                    <p class="font-sans text-[11px] uppercase tracking-[0.34em] text-noir-ember font-bold">
-                        Moment 05 — Unfiltered
-                    </p>
-                    <h2 class="font-serif italic text-4xl sm:text-6xl font-bold text-white intense-glow leading-tight">
-                        I want to bite you!!!!!!!!
-                    </h2>
-                    <div class="space-y-4 font-editorial text-xl sm:text-2xl text-noir-blush/85 leading-[1.8]">
-                        <p>
-                            I can never say it enough, Prathyusha: you are the deepest desire I have ever sought after.
-                        </p>
-                        <p>
-                            To me, you are a goddess I truly worship.
-                        </p>
-                    </div>
-                </div>
-            </article>
+  <footer>Rise &amp; Fall &middot; A night in</footer>
 
-            <!-- SLIDE 06: EVEN WHEN WE CLASH + CLOSING -->
-            <article class="chapter-slide grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center" data-index="5">
-                <div class="lg:col-span-5 flex flex-col items-center">
-                    <div class="bg-white/95 p-5 rounded-3xl rotate-[-3deg] shadow-[0_20px_50px_rgba(0,0,0,0.7)] border-2 border-noir-amber/40 max-w-[260px]">
-                        <img src="image_6b2400.png" alt="Aff..." class="w-48 h-48 sm:w-56 sm:h-56 object-contain" onerror="this.style.display='none'">
-                    </div>
-                    <p class="mt-5 font-sans text-[10px] uppercase tracking-[0.28em] text-noir-muted">
-                        Even after the eye-rolls
-                    </p>
-                </div>
-                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-                    <p class="font-sans text-[11px] uppercase tracking-[0.34em] text-noir-amber font-semibold">
-                        Moment 06 — Always
-                    </p>
-                    <h2 class="font-serif text-4xl sm:text-5xl font-bold text-white leading-[1.12]">
-                        Still cannot stay away.
-                    </h2>
-                    <div class="space-y-4 font-editorial text-xl sm:text-2xl text-noir-blush/85 leading-[1.8]">
-                        <p>
-                            Even through our disagreements and the moments we clash, Prathyusha, I still cannot stay away from you.
-                        </p>
-                        <p>
-                            You were very special to me, you are special to me, and you always will be.
-                        </p>
-                    </div>
-
-                    <div class="pt-4 flex flex-col sm:flex-row items-center lg:items-end justify-between gap-6 border-t border-noir-amber/20">
-                        <div>
-                            <p class="font-sans text-[10px] uppercase tracking-[0.28em] text-noir-amber">Always your</p>
-                            <p class="font-script text-4xl text-white">Admirer</p>
-                        </div>
-                        <a href="https://wa.me/917372071356?text=At%20least%20let%20me%20know%20you%20saw%20it" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-8 py-3.5 bg-noir-crimson hover:bg-noir-ember border border-noir-amber/60 text-white font-sans text-xs font-semibold tracking-[0.18em] uppercase rounded-full transition-all duration-300 transform hover:-translate-y-0.5 shadow-[0_12px_30px_-8px_rgba(158,11,34,0.65)]">
-                            At least let me know you saw it
-                        </a>
-                    </div>
-                </div>
-            </article>
-
-        </div>
-    </main>
-
-    <!-- ================= BOTTOM FILMSTRIP & CONTROLS ================= -->
-    <footer class="relative z-20 border-t border-noir-amber/15 bg-noir-bg/85 backdrop-blur-md py-4 px-4 sm:px-8">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <!-- Prev / Next Controls -->
-            <div class="flex items-center gap-3 order-2 sm:order-1">
-                <button type="button" id="prevBtn" class="px-4 py-2 rounded-full border border-noir-amber/35 text-xs font-sans uppercase tracking-[0.2em] text-noir-blush hover:border-noir-amber hover:text-white transition-all disabled:opacity-30">
-                    ← Prev
-                </button>
-                <button type="button" id="nextBtn" class="px-5 py-2 rounded-full bg-noir-crimson/90 hover:bg-noir-ember border border-noir-amber/50 text-xs font-sans uppercase tracking-[0.2em] text-white font-semibold transition-all disabled:opacity-30">
-                    Next →
-                </button>
-            </div>
-
-            <!-- Interactive Image Filmstrip -->
-            <div class="flex items-center gap-2.5 overflow-x-auto no-scrollbar py-1 order-1 sm:order-2">
-                <button type="button" class="thumb-btn active w-11 h-11 rounded-lg overflow-hidden shrink-0" data-jump="0" aria-label="Moment 1">
-                    <img src="image_6b18e0.jpg" alt="" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                </button>
-                <button type="button" class="thumb-btn w-11 h-11 rounded-lg overflow-hidden shrink-0" data-jump="1" aria-label="Moment 2">
-                    <img src="image_6b2764.png" alt="" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                </button>
-                <button type="button" class="thumb-btn w-11 h-11 rounded-lg overflow-hidden shrink-0" data-jump="2" aria-label="Moment 3">
-                    <img src="image_6b1fc0.jpg" alt="" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                </button>
-                <button type="button" class="thumb-btn w-11 h-11 rounded-lg overflow-hidden shrink-0" data-jump="3" aria-label="Moment 4">
-                    <img src="image_6b1c62.jpg" alt="" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                </button>
-                <button type="button" class="thumb-btn w-11 h-11 rounded-lg overflow-hidden shrink-0" data-jump="4" aria-label="Moment 5">
-                    <img src="image_6b1be3.jpg" alt="" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                </button>
-                <button type="button" class="thumb-btn w-11 h-11 rounded-lg overflow-hidden bg-white p-1 shrink-0" data-jump="5" aria-label="Moment 6">
-                    <img src="image_6b2400.png" alt="" class="w-full h-full object-contain" onerror="this.style.display='none'">
-                </button>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Ambient Embers
-            const emberField = document.getElementById('emberField');
-            const palette = ['#e0243b', '#d99b52', '#9e0b22'];
-            for (let i = 0; i < 18; i++) {
-                const e = document.createElement('div');
-                e.className = 'ember';
-                const size = Math.random() * 4 + 2;
-                e.style.width = `${size}px`;
-                e.style.height = `${size}px`;
-                e.style.left = `${Math.random() * 100}vw`;
-                e.style.backgroundColor = palette[i % palette.length];
-                e.style.boxShadow = `0 0 8px ${palette[i % palette.length]}`;
-                e.style.setProperty('--drift', `${(Math.random() - 0.5) * 80}px`);
-                e.style.animationDuration = `${Math.random() * 12 + 10}s`;
-                e.style.animationDelay = `${Math.random() * -18}s`;
-                emberField.appendChild(e);
-            }
-
-            // 2. Audio & Curtain
-            const entryCurtain = document.getElementById('entryCurtain');
-            const openDossierBtn = document.getElementById('openDossierBtn');
-            const bgAudio = document.getElementById('bgAudio');
-            const audioToggleBtn = document.getElementById('audioToggleBtn');
-            const audioIcon = document.getElementById('audioIcon');
-            let isAudioPlaying = false;
-
-            openDossierBtn.addEventListener('click', () => {
-                entryCurtain.classList.add('curtain-hidden');
-                bgAudio.volume = 0.4;
-                bgAudio.play().then(() => {
-                    isAudioPlaying = true;
-                    audioIcon.style.opacity = '1';
-                }).catch(() => {
-                    audioIcon.style.opacity = '0.45';
-                });
-            });
-
-            audioToggleBtn.addEventListener('click', () => {
-                if (isAudioPlaying) {
-                    bgAudio.pause();
-                    audioIcon.style.opacity = '0.45';
-                } else {
-                    bgAudio.play().catch(() => {});
-                    audioIcon.style.opacity = '1';
-                }
-                isAudioPlaying = !isAudioPlaying;
-            });
-
-            // 3. Lookbook Deck Navigation
-            const slides = Array.from(document.querySelectorAll('.chapter-slide'));
-            const thumbs = Array.from(document.querySelectorAll('.thumb-btn'));
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const chapterCounter = document.getElementById('chapterCounter');
-            const progressBar = document.getElementById('progressBar');
-            let currentIndex = 0;
-
-            function goToSlide(index) {
-                currentIndex = Math.max(0, Math.min(slides.length - 1, index));
-
-                slides.forEach((slide, i) => {
-                    slide.classList.toggle('active', i === currentIndex);
-                });
-
-                thumbs.forEach((thumb, i) => {
-                    thumb.classList.toggle('active', i === currentIndex);
-                });
-
-                chapterCounter.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
-                progressBar.style.width = `${((currentIndex + 1) / slides.length) * 100}%`;
-
-                prevBtn.disabled = currentIndex === 0;
-                nextBtn.disabled = currentIndex === slides.length - 1;
-                nextBtn.textContent = currentIndex === slides.length - 1 ? 'Fin ✦' : 'Next →';
-            }
-
-            prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
-            nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
-
-            thumbs.forEach((btn) => {
-                btn.addEventListener('click', () => {
-                    goToSlide(Number(btn.getAttribute('data-jump')));
-                });
-            });
-
-            // Keyboard arrow support
-            document.addEventListener('keydown', (e) => {
-                if (!entryCurtain.classList.contains('curtain-hidden')) return;
-                if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
-                if (e.key === 'ArrowLeft') goToSlide(currentIndex - 1);
-            });
-
-            // Mobile touch swipe support
-            const swipeArea = document.getElementById('stageSwipeArea');
-            let touchStartX = 0;
-            swipeArea.addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-            }, { passive: true });
-            swipeArea.addEventListener('touchend', (e) => {
-                const diff = touchStartX - e.changedTouches[0].screenX;
-                if (Math.abs(diff) > 50) {
-                    if (diff > 0) goToSlide(currentIndex + 1);
-                    else goToSlide(currentIndex - 1);
-                }
-            }, { passive: true });
-
-            goToSlide(0);
-
-            // 4. Crimson Spark Burst on Slide 05
-            const crimsonCanvas = document.getElementById('crimsonCanvas');
-            if (crimsonCanvas) {
-                crimsonCanvas.addEventListener('click', (e) => {
-                    for (let i = 0; i < 24; i++) {
-                        const dot = document.createElement('div');
-                        dot.className = 'burst-dot';
-                        const size = Math.random() * 6 + 3;
-                        dot.style.width = `${size}px`;
-                        dot.style.height = `${size}px`;
-                        dot.style.backgroundColor = i % 2 === 0 ? '#e0243b' : '#d99b52';
-                        dot.style.boxShadow = '0 0 10px currentColor';
-                        dot.style.left = `${e.clientX}px`;
-                        dot.style.top = `${e.clientY}px`;
-                        const angle = Math.random() * Math.PI * 2;
-                        const dist = Math.random() * 140 + 40;
-                        dot.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
-                        dot.style.setProperty('--ty', `${Math.sin(angle) * dist - 40}px`);
-                        document.body.appendChild(dot);
-                        setTimeout(() => dot.remove(), 1350);
-                    }
-                });
-            }
-        });
-    </script>
+  <script>
+    const items = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    items.forEach((el) => observer.observe(el));
+  </script>
 </body>
 </html>
